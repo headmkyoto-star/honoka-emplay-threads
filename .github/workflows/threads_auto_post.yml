@@ -1,0 +1,24 @@
+name: ほのかエンプレイ Threads自動投稿
+
+on:
+  schedule:
+    # 月〜金、JST 12:00 と JST 19:00（昼休み・退勤後）
+    - cron: "0 3 * * 1-5"   # JST 12:00
+    - cron: "0 10 * * 1-5"  # JST 19:00
+  workflow_dispatch:
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    name: スレッドへの投稿
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - run: pip install requests anthropic
+      - env:
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python post_to_threads.py
