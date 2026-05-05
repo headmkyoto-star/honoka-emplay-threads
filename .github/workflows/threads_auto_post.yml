@@ -2,9 +2,8 @@ name: ほのかエンプレイ Threads自動投稿
 
 on:
   schedule:
-    # 月〜金、JST 12:00 と JST 19:00（昼休み・退勤後）
-    - cron: "0 3 * * 1-5"   # JST 12:00
-    - cron: "0 10 * * 1-5"  # JST 19:00
+    # 月〜金 JST 9:00 (1日1回)
+    - cron: "0 0 * * 1-5"
   workflow_dispatch:
 
 jobs:
