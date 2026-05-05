@@ -20,7 +20,9 @@ MENUS = [
 ]
 
 def get_media():
-    candidates = []
+    """動画9割・画像1割で選択（ほのかエンプレイ仕様）"""
+    images = []
+    videos = []
     try:
         r = requests.get(GITHUB_API_BASE + "images")
         if r.status_code == 200:
@@ -30,7 +32,7 @@ def get_media():
                     name = f["name"].lower()
                     if name.endswith((".jpg", ".jpeg", ".png", ".webp")):
                         url = GITHUB_RAW_BASE + "images/" + f["name"].replace(" ", "_")
-                        candidates.append((url, "IMAGE"))
+                        images.append((url, "IMAGE"))
     except: pass
     try:
         r = requests.get(GITHUB_API_BASE + "videos")
@@ -41,11 +43,18 @@ def get_media():
                     name = f["name"].lower()
                     if name.endswith((".mp4", ".mov")):
                         url = GITHUB_RAW_BASE + "videos/" + f["name"].replace(" ", "_")
-                        candidates.append((url, "VIDEO"))
+                        videos.append((url, "VIDEO"))
     except: pass
-    if not candidates:
-        return None, None
-    return random.choice(candidates)
+
+    # 比率制御: 動画9割・画像1割
+    use_video = random.random() < 0.9
+    if use_video and videos:
+        return random.choice(videos)
+    elif images:
+        return random.choice(images)
+    elif videos:  # 画像がない場合は動画にフォールバック
+        return random.choice(videos)
+    return None, None
 
 def generate_post():
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
@@ -95,7 +104,6 @@ def generate_post():
     text = text.replace("「", "").replace("」", "")
     text = text.replace("。", "").replace("、", " ")
 
-    # 安全策: 冒頭フレーズが含まれていない場合は強制的に追加
     if not text.startswith(opening):
         text = opening + " " + text
 
@@ -116,6 +124,7 @@ def post_to_threads(text, media_url=None, media_type=None):
     if r.status_code != 200:
         print(f"❌ コンテナ作成失敗: {r.text}")
         if media_type:
+            print("📝 テキストのみで再試行")
             return post_to_threads(text, None, None)
         return r
 
