@@ -1,9 +1,8 @@
 name: ほのかエンプレイ Threads自動投稿
 
+# cronスケジュールは無効化
+# Coworkのスケジュールタスクから直接Threads APIを呼ぶ方式に変更
 on:
-  schedule:
-    # 月〜金 JST 9:00 (1日1回)
-    - cron: "0 0 * * 1-5"
   workflow_dispatch:
 
 jobs:
