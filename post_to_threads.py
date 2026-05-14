@@ -111,13 +111,13 @@ def generate_post():
 
 def post_to_threads(text, media_url=None, media_type=None):
     if media_type == "IMAGE":
-        params = {"media_type": "IMAGE", "image_url": media_url, "text": text, "access_token": ACCESS_TOKEN}
+        params = {"media_type": "IMAGE", "image_url": media_url, "text": text, "topic_tag": "ヘッドミント", "access_token": ACCESS_TOKEN}
         wait_sec = 30
     elif media_type == "VIDEO":
-        params = {"media_type": "VIDEO", "video_url": media_url, "text": text, "access_token": ACCESS_TOKEN}
+        params = {"media_type": "VIDEO", "video_url": media_url, "text": text, "topic_tag": "ヘッドミント", "access_token": ACCESS_TOKEN}
         wait_sec = 60
     else:
-        params = {"media_type": "TEXT", "text": text, "access_token": ACCESS_TOKEN}
+        params = {"media_type": "TEXT", "text": text, "topic_tag": "ヘッドミント", "access_token": ACCESS_TOKEN}
         wait_sec = 5
 
     r = requests.post(f"https://graph.threads.net/v1.0/{USER_ID}/threads", params=params)
